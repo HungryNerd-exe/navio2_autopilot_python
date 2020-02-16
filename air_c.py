@@ -85,10 +85,10 @@ def initialize_gps():
 
 def initialize_sensors():
     print('\ninitializing sensors...')
-    adc_lib = ctypes.CDLL('/home/pi/shared_c_libraries/ADC.so')
-    imu_lib = ctypes.CDLL('/home/pi/shared_c_libraries/AccelGyroMag.so')
-    baro_lib = ctypes.CDLL('/home/pi/shared_c_libraries/Barometer.so')
-    ubl_lib = ctypes.CDLL('/home/pi/shared_c_libraries/gps.so')
+    adc_lib = ctypes.CDLL('shared_c_libraries/ADC.so')
+    imu_lib = ctypes.CDLL('shared_c_libraries/AccelGyroMag.so')
+    baro_lib = ctypes.CDLL('shared_c_libraries/Barometer.so')
+    ubl_lib = ctypes.CDLL('shared_c_libraries/gps.so')
     # # #
     adc = adc_lib.initialize()
     # imu = imu_lib.initialize()
