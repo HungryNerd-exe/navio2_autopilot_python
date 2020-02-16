@@ -270,8 +270,8 @@ def read_sensor(y, adc_lib, adc, imu_lib, imu, baro_lib, baro, ubl_lib, ubl):
 
 def servo_loop(servo):
 
-    rcin_lib = ctypes.CDLL('/home/pi/shared_c_libraries/RCInput.so')
-    servo_lib = ctypes.CDLL('/home/pi/shared_c_libraries/servo.so')
+    rcin_lib = ctypes.CDLL('shared_c_libraries/RCInput.so')
+    servo_lib = ctypes.CDLL('shared_c_libraries/servo.so')
     pwm = servo_lib.initialize()
     rcin = rcin_lib.initialize()
     while True:
