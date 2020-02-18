@@ -10,4 +10,4 @@ the folder named 'Navio2' is a submodule from Emlid and is required for both var
 
 execution of test.py is all that is required to run. *for example: sudo nice -n -10 python test_c.py*
     
-all files in the repository should be kept within the same directory, but your service file should be placed in /etc/systemd/system and should contain the full filepath of either variant of test.py
+all files in the repository should be kept within the same directory, but your service file should be placed in /etc/systemd/system and should contain the directory and full filepath of either variant of test.py
