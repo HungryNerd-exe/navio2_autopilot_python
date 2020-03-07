@@ -300,7 +300,7 @@ def controller_loop(xh, servo, cmd):
                 print('AP Reset - Ailerons')
             else:
                 try:
-            dif_phi = 2*(xh[6] - x_old[6])/(xh[6] + x_old[6])
+                    dif_phi = 2*(xh[6] - x_old[6])/(xh[6] + x_old[6])
                     #print('Phi: ' + str(dif_phi))
                     if dif_phi > 0.20:
                         if servo[aileron] - 0.04 > aileron_pwm_min:
