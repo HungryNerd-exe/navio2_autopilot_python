@@ -50,10 +50,10 @@ def estimator_loop(y,xh,servo):
     #======ESTIMATOR CODE STOPS HERE===================================
         if (new_gps and print_time_estimator_gps):
             loop_time = (time.time()-initial_time)
-            print('estimator_gps loop time: '+str(loop_time)+'\t['+str(1/loop_time)+' hertz]')
+            print('estimator_gps loop time: '+str(loop_time)+' sec\t['+str(round(1/loop_time))+' hz]')
         elif (not new_gps and print_time_estimator_nogps):
             loop_time = (time.time()-initial_time)
-            print('estimator_nogps loop time: '+str(loop_time)+'\t['+str(1/loop_time)+' hertz]')
+            print('estimator_nogps loop time: '+str(loop_time)+' sec\t['+str(round(1/loop_time))+' hz]')
         time.sleep(max(0.0125-(time.time()-initial_time),0) )
 
 def controller_loop(xh,servo,cmd):
@@ -78,7 +78,7 @@ def controller_loop(xh,servo,cmd):
         #=======CONTROLLER CODE STOPS HERE ======================================
         if print_time_controller:
             loop_time = (time.time()-initial_time)
-            print('controller loop time: '+str(loop_time)+'\t['+str(1/loop_time)+' hertz]')
+            print('controller loop time: '+str(loop_time)+' sec\t['+str(round(1/loop_time))+' hz]')
         time.sleep(max(0.0125-(time.time()-initial_time),0) )
 
 
