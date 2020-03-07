@@ -37,7 +37,7 @@ psi_c, h_c = range(2)
 
 def estimator_loop(y, xh, servo):
     # get sensors for read_sensor function call.
-    adc, imu, baro, ubl = air.initialize_sensors()
+    sensors = air.initialize_sensors()
     time.sleep(3)
     count = 0
     # Sensor installation details
@@ -102,7 +102,7 @@ def estimator_loop(y, xh, servo):
 
     while True:
         initialEstTime = time.time()
-        new_gps = air.read_sensor(y, adc, imu, baro, ubl)  # updates values in y
+        new_gps = air.read_sensor(y, sensors)  # updates values in y
         # initiate
 
         if count == 0:
