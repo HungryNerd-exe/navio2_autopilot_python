@@ -71,12 +71,12 @@ def initialize_gps():
     ubl.configure_message_rate(ublox.CLASS_NAV, ublox.MSG_NAV_DGPS, 0)
 
     while True:
-		try:
-			with timer(seconds=0.001):
-	        	msg = ubl.receive_message_noerror()
-	        	print(msg)
-		except:
-			break
+        try:
+            with timer(seconds=0.001):
+            	msg = ubl.receive_message_noerror()
+            	print(msg)
+        except:
+            break
 
     return ubl
 
