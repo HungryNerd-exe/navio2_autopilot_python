@@ -293,7 +293,7 @@ def servo_loop(servo, print_time):
                 servo_lib.set_servo(pwm,x,from_controller[x])
         if print_time:
             loop_time = (time.time()-initial_time)
-            print('servo loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
+            print('servo loop time: '+str(loop_time)+'\t['+str(1/loop_time)+' hertz]')
         time.sleep(max(0.005-(time.time()-initial_time),0) )
 
 def telemetry_loop(y,xh,servo,master):
