@@ -71,9 +71,13 @@ def initialize_gps():
     ubl.configure_message_rate(ublox.CLASS_NAV, ublox.MSG_NAV_CLOCK, 0)
     ubl.configure_message_rate(ublox.CLASS_NAV, ublox.MSG_NAV_DGPS, 0)
 
-    for x in range(30):
-        msg = ubl.receive_message_noerror()
-        # print(msg)
+    while True:
+        try:
+            with timer(seconds=0.001):
+                msg = ubl.receive_message_noerror()
+                # print(msg)
+        except:
+            break
 
     return ubl
 
@@ -170,9 +174,9 @@ def read_sensor(y, sensors):
     # update baro data
     baro.refreshPressure()
 
-    # update adc data
+    # update adc data [we still don't trust this data]
     for x in range(6):
-        y[adc_a0+x] = adc.read(x)    # we don't trust this data at all right now.
+        y[adc_a0+x] = adc.read(x)
     if (y[last_curr_time] != 0.): y[est_curr_consumed] += y[adc_a3]*(time.time()-y[last_curr_time])/3600.
     y[last_curr_time] = time.time()
 
@@ -193,7 +197,7 @@ def read_sensor(y, sensors):
     while (True):
         try:
             with timer(seconds=0.001):
-        		msg = ubl.receive_message_noerror()
+                msg = ubl.receive_message_noerror()
         except:
             break
         if msg.name() == "NAV_POSLLH":
@@ -225,7 +229,7 @@ def read_sensor(y, sensors):
         return True
     return False
 
-def servo_loop(servo):
+def servo_loop(servo, print_time):
 
     rcin = navio2.rcinput.RCInput()
 
@@ -265,7 +269,7 @@ def servo_loop(servo):
                     # rc_previous[x] = servo[servo_0+x]
             else:
                 servo[mode_flag] = 1
-                # set servo pwm using s[servo_0+x] from controller loop.
+                # set servo pwm using servo[servo_0+x] from controller loop.
                 s0, s1, s2, s3, s4, s5 = servo[servo_0], servo[servo_1], servo[servo_2], servo[servo_3], servo[servo_4], servo[servo_5]
                 #if (abs(s0 - rc_previous[0]) >= .02):
                 pwm_0.set_duty_cycle(s0)
@@ -285,7 +289,9 @@ def servo_loop(servo):
                 #if (abs(s5 - rc_previous[5]) >= .02):
                 pwm_5.set_duty_cycle(s5)
                     #rc_previous[5] = s5
-            # print(time.time()-initial_time)
+            if print_time:
+                loop_time = (time.time()-initial_time)
+                print('servo loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
             time.sleep(max(0.005-(time.time()-initial_time),0) )
 
 def telemetry_loop(y,xh,servo,master):
@@ -295,7 +301,7 @@ def telemetry_loop(y,xh,servo,master):
 
     # last_time = current_milli_time()
     while True:
-    	initial_time=time.time()
+        initial_time=time.time()
         send_telemetry(y,xh,servo,master,telemetry_time)
         # print("telemetry sent.")
         time.sleep(max(0.3-(time.time()-initial_time),.2))

@@ -8,6 +8,11 @@ import time
 import numpy as np
 import air_c as air
 
+print_time_servo = False
+print_time_estimator_nogps = False
+print_time_estimator_gps = True
+print_time_controller = False
+
 # define indices of xh for easier access.
 x, y, z, vt, alpha, beta, phi, theta, psi, p, q, r = range(12)
 
@@ -32,31 +37,32 @@ def estimator_loop(y,xh,servo):
     while True:
         initialEstTime = time.time()
         new_gps = air.read_sensor(y,sensors) # updates values in y
-	print(y[0])
-	#=====ESTIMATOR CODE STARTS HERE==================================
+    print(y[0])
+    #=====ESTIMATOR CODE STARTS HERE==================================
         # Predict step here
 
-	# Measurement correction step here (depends on which sensors available)
+    # Measurement correction step here (depends on which sensors available)
         if (new_gps):
             pass # do estimation with gps here.
         else:
             pass # do estimation without gps here.
         # write estimated values to the xh array.
-	#======ESTIMATOR CODE STOPS HERE===================================
-	# if (new_gps): print(new_gps)
-	# print('{}: {}'.format(new_gps,time.time()-initialEstTime))
-	if (0.0125- (time.time()-initialEstTime) < 0):
-	    print( 1/(time.time()-initialEstTime) )
-	#print(time.time()-initialEstTime)
+    #======ESTIMATOR CODE STOPS HERE===================================
+    if (new_gps and print_time_estimator_gps):
+        loop_time = (time.time()-initial_time)
+        print('estimator_gps loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
+    elif (!new_gps and print_time_estimator_nogps):
+        loop_time = (time.time()-initial_time)
+        print('estimator_nogps loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
     time.sleep(max(0.0125-(time.time()-initialEstTime),0) )
 
 def controller_loop(xh,servo,cmd):
 
     while True:
-    	initial_time=time.time()
+        initial_time=time.time()
         # print("total milliseconds between controller_loop iterations: {}".format(initial_time-last_time))
         if (servo[mode_flag] == 1):
-	    #======CONTROLLER CODE STARTS HERE===============================================
+        #======CONTROLLER CODE STARTS HERE===============================================
             # rewrite servo_out values to servo array based on their previous values and xh, cmd
             # if (servo[servo_1]<1.5): servo[servo_1] = 1.55
             # else: servo[servo_1] = 1.45
@@ -70,8 +76,10 @@ def controller_loop(xh,servo,cmd):
             servo[rudder]=servo[rcin_3]
             servo[servo_4]=servo[servo_4] #no servo; channel used for manual/auto switch
             servo[flaps]=servo[rcin_5]
-	    #=======CONTROLLER CODE STOPS HERE ======================================
-	#print(time.time()-initial_time)
+        #=======CONTROLLER CODE STOPS HERE ======================================
+        if print_time_controller:
+            loop_time = (time.time()-initial_time)
+            print('controller loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
         time.sleep(max(0.0125-(time.time()-initial_time),0) )
 
 
@@ -92,7 +100,7 @@ if __name__ == "__main__":
     controller_process = multiprocessing.Process(target=controller_loop, args=(xh,servo,cmd))
     controller_process.daemon = True
     controller_process.start()
-    servo_process = multiprocessing.Process(target=air.servo_loop, args=(servo,))
+    servo_process = multiprocessing.Process(target=air.servo_loop, args=(servo,print_time_servo))
     servo_process.daemon = True
     servo_process.start()
     time.sleep(5)
@@ -113,10 +121,10 @@ if __name__ == "__main__":
         # still haven't figured out how to get mode to show up in mission planner.
         # print('heartbeat sent.')
         time.sleep(0.5)
-	#=====WAYPOINT TRACKER STARTS HERE======================
-	#Simple waypoint tracker
+    #=====WAYPOINT TRACKER STARTS HERE======================
+    #Simple waypoint tracker
         #
-	#=====WAYPOINT TRACKER STOPS HERE=======================
+    #=====WAYPOINT TRACKER STOPS HERE=======================
 
     # handle incoming commands over telemetry
         # try:

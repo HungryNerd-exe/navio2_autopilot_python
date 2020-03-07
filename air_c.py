@@ -73,8 +73,8 @@ def initialize_gps():
     while True:
         try:
             with timer(seconds=0.001):
-            	msg = ubl.receive_message_noerror()
-            	print(msg)
+                msg = ubl.receive_message_noerror()
+                # print(msg)
         except:
             break
 
@@ -82,16 +82,17 @@ def initialize_gps():
 
 def initialize_sensors():
     print('\ninitializing sensors...')
+    # load shared c libraries.
+    # still need unused libraries for read_sensor() parameters to align.
     adc_lib = ctypes.CDLL('shared_c_libraries/ADC.so')
     imu_lib = ctypes.CDLL('shared_c_libraries/AccelGyroMag.so')
     baro_lib = ctypes.CDLL('shared_c_libraries/Barometer.so')
     ubl_lib = ctypes.CDLL('shared_c_libraries/gps.so')
-    # # #
     adc = adc_lib.initialize()
     # imu = imu_lib.initialize()
     baro = baro_lib.initialize()
     # ubl = ubl_lib.initialize()
-    # # #
+    # initialize sensors from python libraries.
     # adc = navio2.adc.ADC()
     imu = navio2.lsm9ds1.LSM9DS1()
     imu.initialize()
@@ -185,16 +186,16 @@ def read_sensor(y, sensors):
     baro_lib.refreshPressure(baro)
     # baro.refreshPressure()
 
-    # update adc data
+    # update adc data [we still don't trust this data]
     # for x in range(6):
-    #     y[adc_a0+x] = adc.read(x)    # we don't trust this data at all right now.
+    #     y[adc_a0+x] = adc.read(x)  # python library
     adc_lib.measure(adc,ctypes.byref(y))
     if (y[last_curr_time] != 0.): y[est_curr_consumed] += y[adc_a3]*(time.time()%100000-y[last_curr_time])/3600.
     y[last_curr_time] = time.time()%100000
     # print(y[est_curr_consumed])
 
     # update imu data
-    # imu_lib.read_imu(imu, ctypes.byref(y))
+    # imu_lib.read_imu(imu, ctypes.byref(y)) # shared c library
     m9a, m9g, m9m = imu.getMotion9()
     y[ax] = m9a[0]
     y[ay] = m9a[1]
@@ -212,7 +213,7 @@ def read_sensor(y, sensors):
     #     msg_id = 0
     #     try:
     #         with timer(seconds=0.05):
-    #             msg_id = ubl_lib.decode_message(ubl,y)
+    #             msg_id = ubl_lib.decode_message(ubl,y)    # shared c library
     #             if (msg_id == 258): p = True
     #             elif (msg_id == 259): s = True
     #             elif (msg_id == 274): v = True
@@ -261,15 +262,16 @@ def read_sensor(y, sensors):
         baro_lib.readPressure(baro)
         y[pres_baro] = baro_lib.returnPressure(baro)
         # baro.readPressure()
-        # baro.calculatePressureAndTemperature()
+        # baro.calculatePressureAndTemperature()    # python library
         # y[pres_baro] = baro.returnPressure()
         if (y[pres_initial] == 0): y[pres_initial] = y[pres_baro]
         # print(baro.returnPressure())
         return True
     return False
 
-def servo_loop(servo):
+def servo_loop(servo, print_time):
 
+    # load shared c libraries
     rcin_lib = ctypes.CDLL('shared_c_libraries/RCInput.so')
     servo_lib = ctypes.CDLL('shared_c_libraries/servo.so')
     pwm = servo_lib.initialize()
@@ -289,7 +291,9 @@ def servo_loop(servo):
             from_controller = (servo[servo_0], servo[servo_1], servo[servo_2], servo[servo_3], servo[servo_4], servo[servo_5])
             for x in range(6):
                 servo_lib.set_servo(pwm,x,from_controller[x])
-        # print(time.time()-initial_time)
+        if print_time:
+            loop_time = (time.time()-initial_time)
+            print('servo loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
         time.sleep(max(0.005-(time.time()-initial_time),0) )
 
 def telemetry_loop(y,xh,servo,master):
