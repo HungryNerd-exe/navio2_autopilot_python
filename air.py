@@ -90,7 +90,8 @@ def initialize_sensors():
     baro = navio2.ms5611.MS5611()
     baro.test()
     ubl = initialize_gps()
-    return adc,imu,baro,ubl
+    sensors = [adc,imu,baro,ubl]
+    return sensors
 
 def wait_heartbeat(master):
     print("waiting for heartbeat...")
@@ -167,7 +168,9 @@ def send_telemetry(y,xh,servo,master, initial_time):
     # errors_comm = 0
     # master.mav.sys_status_send(sensors_present,sensors_enabled,sensors_health,load,voltage_battery,current_battery,battery_remaining,drop_rate_comm,errors_comm,0,0,0,0)
 
-def read_sensor(y, adc, imu, baro, ubl):
+def read_sensor(y, sensors):
+
+    adc, imu, baro, ubl = sensors
 
     # update baro data
     baro.refreshPressure()

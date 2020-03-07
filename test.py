@@ -2,9 +2,9 @@
 
 from __future__ import print_function
 from pymavlink import mavutil
-import multiprocessing, time
+import multiprocessing, ctypes, time
 import numpy as np
-import air
+import air_c as air
 
 # define indices of xh for easier access.
 x, y, z, vt, alpha, beta, phi, theta, psi, p, q, r = range(12)
@@ -25,11 +25,12 @@ psi_c, h_c = range(2)
 
 def estimator_loop(y,xh,servo):
     # get sensors for read_sensor function call.
-    adc,imu,baro,ubl = air.initialize_sensors()
+    sensors = air.initialize_sensors()
     time.sleep(3)
     while True:
         initialEstTime = time.time()
-        new_gps = air.read_sensor(y,adc,imu,baro,ubl) # updates values in y
+        new_gps = air.read_sensor(y,sensors) # updates values in y
+	print(y[0])
 	#=====ESTIMATOR CODE STARTS HERE==================================
         # Predict step here
 
@@ -44,6 +45,7 @@ def estimator_loop(y,xh,servo):
 	# print('{}: {}'.format(new_gps,time.time()-initialEstTime))
 	if (0.0125- (time.time()-initialEstTime) < 0):
 	    print( 1/(time.time()-initialEstTime) )
+	#print(time.time()-initialEstTime)
     time.sleep(max(0.0125-(time.time()-initialEstTime),0) )
 
 def controller_loop(xh,servo,cmd):
@@ -67,6 +69,7 @@ def controller_loop(xh,servo,cmd):
             servo[servo_4]=servo[servo_4] #no servo; channel used for manual/auto switch
             servo[flaps]=servo[rcin_5]
 	    #=======CONTROLLER CODE STOPS HERE ======================================
+	#print(time.time()-initial_time)
         time.sleep(max(0.0125-(time.time()-initial_time),0) )
 
 
@@ -75,7 +78,7 @@ if __name__ == "__main__":
     master = mavutil.mavlink_connection('/dev/ttyAMA0', baud=57600, source_system=255)
 
     # initialize arrays for sharing sensor data.
-    y = multiprocessing.Array('d', np.zeros(26)) # imu, baro, gps, adc
+    y = multiprocessing.RawArray(ctypes.c_float, np.zeros(26)) # imu, baro, gps, adc
     xh = multiprocessing.Array('d', np.zeros(12)) # position, orientation, rates
     servo = multiprocessing.Array('d', np.zeros(13)) # mode_flag, rcin, servo_out
     cmd = multiprocessing.Array('d', np.zeros(2)) # psi_c, h_c
