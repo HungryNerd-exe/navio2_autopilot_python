@@ -4,7 +4,7 @@ air.py contains implementations of sensor reads and telemetry communication to b
 
 test.py initializes separate processes and arrays to share data with functions in air.py, and contains placeholders for estimation and control functions to update values for servo and telemetry operations controlled by air.py
 
-air.py a variant named air_c.py that takes advantage of shared C libraries derived from Emlid C++ example code. you can use "import air_c as air" in test.py for a slight increase in performance, but this will require the presence of the folder named 'shared_c_libraries.'
+air.py a variant named air_c.py that takes advantage of shared C libraries derived from Emlid C++ example code. you can use 'import air_c as air' in test.py for a slight increase in performance, but this will require the presence of the folder named 'shared_c_libraries.'
 
 the folder named 'Navio2' is a submodule from Emlid and is required for both variants.
 
