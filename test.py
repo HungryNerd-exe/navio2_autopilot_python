@@ -35,7 +35,7 @@ def estimator_loop(y,xh,servo):
     sensors = air.initialize_sensors()
     time.sleep(3)
     while True:
-        initialEstTime = time.time()
+        initial_time = time.time()
         new_gps = air.read_sensor(y,sensors) # updates values in y
         # print(y[0])
     #=====ESTIMATOR CODE STARTS HERE==================================
@@ -54,13 +54,12 @@ def estimator_loop(y,xh,servo):
         elif (not new_gps and print_time_estimator_nogps):
             loop_time = (time.time()-initial_time)
             print('estimator_nogps loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
-        time.sleep(max(0.0125-(time.time()-initialEstTime),0) )
+        time.sleep(max(0.0125-(time.time()-initial_time),0) )
 
 def controller_loop(xh,servo,cmd):
 
     while True:
         initial_time=time.time()
-        # print("total milliseconds between controller_loop iterations: {}".format(initial_time-last_time))
         if (servo[mode_flag] == 1):
         #======CONTROLLER CODE STARTS HERE===============================================
             # rewrite servo_out values to servo array based on their previous values and xh, cmd
