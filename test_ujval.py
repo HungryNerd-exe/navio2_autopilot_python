@@ -38,6 +38,7 @@ psi_c, h_c = range(2)
 def estimator_loop(y, xh, servo):
     # get sensors for read_sensor function call.
     sensors = air.initialize_sensors()
+    imu = sensors[1]
     time.sleep(3)
     count = 0
     # Sensor installation details
