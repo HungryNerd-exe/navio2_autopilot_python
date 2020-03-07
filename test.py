@@ -37,7 +37,7 @@ def estimator_loop(y,xh,servo):
     while True:
         initialEstTime = time.time()
         new_gps = air.read_sensor(y,sensors) # updates values in y
-        print(y[0])
+        # print(y[0])
     #=====ESTIMATOR CODE STARTS HERE==================================
         # Predict step here
 
