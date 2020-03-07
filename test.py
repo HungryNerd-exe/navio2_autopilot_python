@@ -48,13 +48,13 @@ def estimator_loop(y,xh,servo):
             pass # do estimation without gps here.
         # write estimated values to the xh array.
     #======ESTIMATOR CODE STOPS HERE===================================
-    if (new_gps and print_time_estimator_gps):
-        loop_time = (time.time()-initial_time)
-        print('estimator_gps loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
-    elif (not new_gps and print_time_estimator_nogps):
-        loop_time = (time.time()-initial_time)
-        print('estimator_nogps loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
-    time.sleep(max(0.0125-(time.time()-initialEstTime),0) )
+        if (new_gps and print_time_estimator_gps):
+            loop_time = (time.time()-initial_time)
+            print('estimator_gps loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
+        elif (not new_gps and print_time_estimator_nogps):
+            loop_time = (time.time()-initial_time)
+            print('estimator_nogps loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
+        time.sleep(max(0.0125-(time.time()-initialEstTime),0) )
 
 def controller_loop(xh,servo,cmd):
 
