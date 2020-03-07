@@ -2,7 +2,9 @@
 
 from __future__ import print_function
 from pymavlink import mavutil
-import multiprocessing, ctypes, time
+import multiprocessing
+import ctypes
+import time
 import numpy as np
 import air_c as air
 

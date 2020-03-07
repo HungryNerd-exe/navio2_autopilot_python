@@ -3,42 +3,35 @@
 from __future__ import print_function
 from pymavlink import mavutil
 import multiprocessing
-import numpy as np
-import sys
+import ctypes
 import time
 import spidev
 import navio2.lsm9ds1
 import navio2.ms5611
 import navio2.ublox as ublox
-# import ublox
-import navio2.rcinput
 import navio2.pwm
 import navio2.adc
-import navio2.util
-import ctypes
 
-current_milli_time = lambda: int(round(time.time() * 1000))
-
-
-# define indices of y for easier access.
+# define indices of y for simpler accessing.
 ax, ay, az, gyro_p, gyro_q, gyro_r, mag_x, mag_y, mag_z = range(9)
 pres_baro = 9
 gps_posn_n, gps_posn_e, gps_posn_d, gps_vel_n, gps_vel_e, gps_vel_d, gps_fix = range(10,17)
 adc_a0, adc_a1, adc_a2, adc_a3, adc_a4, adc_a5, est_curr_consumed, last_curr_time = range(17,25)
-pres_initial = 25
+pres_initial = 25  # i was using this to test basic mavlink altitude messages.
 
-# define indices of servo for easier access.
+# define indices of xh for simpler accessing.
+x, y, z, vt, alpha, beta, phi, theta, psi, p, q, r = range(12)
+
+# define indices of servo for simpler accessing.
 mode_flag = 0
 rcin_0, rcin_1, rcin_2, rcin_3, rcin_4, rcin_5 = range(1,7)
 servo_0, servo_1, servo_2, servo_3, servo_4, servo_5 = range(7,13)
 throttle, aileron, elevator, rudder, none, flaps = range(7,13)
 
-# define indices of xh for easier access.
-x, y, z, vt, alpha, beta, phi, theta, psi, p, q, r = range(12)
-
+# define function for time in milliseconds for telemetry timestamps.
+current_milli_time = lambda: int(round(time.time() * 1000))
 
 def initialize_gps():
-    # ubl = navio2.ublox.UBlox("spi:0.0", baudrate=5000000, timeout=2)
     ubl = ublox.UBlox("spi:0.0", baudrate=5000000, timeout=2)
 
     ubl.configure_poll_port()
@@ -79,7 +72,7 @@ def initialize_gps():
 
     for x in range(30):
         msg = ubl.receive_message_noerror()
-        # print(msg)
+        print(msg)
 
     return ubl
 
