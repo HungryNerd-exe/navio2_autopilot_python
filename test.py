@@ -51,7 +51,11 @@ def estimator_loop(y,xh,servo):
     if (new_gps and print_time_estimator_gps):
         loop_time = (time.time()-initial_time)
         print('estimator_gps loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
+<<<<<<< HEAD
     elif (not new_gps and print_time_estimator_nogps):
+=======
+    elif (!new_gps and print_time_estimator_nogps):
+>>>>>>> 2ff16d10b83338fba7fd3ea735720b7eb01ffb96
         loop_time = (time.time()-initial_time)
         print('estimator_nogps loop time: '+loop_time+'\t['+1/loop_time+' hertz]')
     time.sleep(max(0.0125-(time.time()-initialEstTime),0) )
