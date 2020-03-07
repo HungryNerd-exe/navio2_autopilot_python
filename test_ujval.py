@@ -254,7 +254,7 @@ def controller_loop(xh, servo, cmd):
                 AP_off = False
                 rc_old = [servo[rcin_0], servo[rcin_1], servo[rcin_2], servo[rcin_3]]
                 #print(rc_old)
-        x_old = np.copy(xh)
+                x_old = np.copy(xh)
                 #print(','.join(map(str,x_old)))
                 servo[throttle] = servo[rcin_0]
                 servo[aileron] = servo[rcin_1]
