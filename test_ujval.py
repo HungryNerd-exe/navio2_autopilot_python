@@ -102,7 +102,7 @@ def estimator_loop(y, xh, servo):
     adc_a0, adc_a1, adc_a2, adc_a3, adc_a4, adc_a5, est_curr_consumed, last_curr_time = range(17, 25)
 
     while True:
-        initialEstTime = time.time()
+        initial_time = time.time()
         new_gps = air.read_sensor(y, sensors)  # updates values in y
         # initiate
 
