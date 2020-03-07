@@ -9,7 +9,7 @@ import numpy as np
 import air
 
 print_time_servo = False
-print_time_estimator_nogps = False
+print_time_estimator_nogps = True
 print_time_estimator_gps = True
 print_time_controller = False
 
@@ -518,7 +518,7 @@ if __name__ == "__main__":
     controller_process = multiprocessing.Process(target=controller_loop, args=(xh, servo, cmd))
     controller_process.daemon = True
     controller_process.start()
-    servo_process = multiprocessing.Process(target=air.servo_loop, args=(servo,))
+    servo_process = multiprocessing.Process(target=air.servo_loop, args=(servo,print_time_servo))
     servo_process.daemon = True
     servo_process.start()
     time.sleep(3)
